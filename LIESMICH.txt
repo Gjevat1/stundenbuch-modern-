@@ -1,0 +1,15 @@
+Stundenbuch - Update (Wochenbericht, Menue, Vorschau)
+
+Geaendert wurde nur: index.html
+Die uebrigen Dateien (manifest.webmanifest und die Icons) sind unveraendert.
+Die Datei sw.js ist nicht enthalten und bleibt wie bisher in deinem Ordner/Repository.
+
+So spielst du das Update ein:
+1. ZIP entpacken.
+2. Die Dateien in den Ordner "Download Handy-Programm 2026" kopieren
+   (gleich benannte Dateien ersetzen).
+3. Bei GitHub im Stundenbuch-Repository: Add file > Upload files,
+   index.html hochladen und mit "Commit changes" bestaetigen.
+4. App einmal mit Internet oeffnen, dann ist die neue Version aktiv.
+
+Vorher in der App unter Sichern und Wiederherstellen ein Backup speichern.

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2A5AA6"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Stundenbuch</title>
+<style>
+:root{--bg:#EEF1F5;--cd:#fff;--tx:#1B2430;--mu:#6B7686;--pr:#2A5AA6;--gr:#55B05C;--rd:#E5534B;--ln:#DDE2EA;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151C;--cd:#1A222D;--tx:#E8EDF3;--mu:#93A0B1;--pr:#3F6FBF;--ln:#2A3441}}
+:root[data-theme="dark"]{--bg:#10151C;--cd:#1A222D;--tx:#E8EDF3;--mu:#93A0B1;--pr:#3F6FBF;--ln:#2A3441}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:90px}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--pr);color:#fff}
+.top h1{font-size:19px;margin:0;font-weight:600}.top button{color:#fff;font-size:28px;line-height:1;padding:0 6px}.sp{flex:1}
+.hero{display:flex;gap:14px;padding:18px 16px 44px;background:var(--pr);color:#fff}
+.cell{flex:1;opacity:.5;border-bottom:1px solid #ffffff99}.cell.on{opacity:1}.cell b{display:block;font-size:32px;font-weight:600}.cell small{display:block;padding:4px 0}
+.card{background:var(--cd);margin:14px 14px 0;border-radius:8px;box-shadow:0 1px 4px #0003;overflow:hidden}
+.hero+.card{margin-top:-30px}
+.lb{padding:12px 16px;color:var(--pr);font-weight:600;font-size:14px;border-bottom:1px solid var(--ln)}
+.row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--ln);background:var(--cd)}
+.g{flex:1;min-width:0}.g small{display:block;color:var(--mu)}
+.fo{width:22px;height:18px;border-radius:4px;flex:none}
+.bt{display:flex}.bt button{flex:1;padding:16px;font-size:19px;color:#fff;letter-spacing:.04em}
+.go{background:var(--gr)}.st{background:var(--rd)}.pb{background:var(--pr)}
+.sum{display:flex;text-align:center}.sum div{flex:1;padding:14px 4px;border-right:1px solid var(--ln)}.sum div:last-child{border:0}.sum div{cursor:pointer}.sum .on b{color:var(--pr)}.sum .on{box-shadow:inset 0 -3px 0 var(--pr)}.sum b{display:block;font-weight:500;font-size:18px}.sum small{color:var(--mu)}
+.wk{display:flex;align-items:center;gap:10px;padding:18px 14px 8px}.wk button{font-size:26px;padding:0 8px}
+.day{display:flex;justify-content:space-between;padding:8px 16px;background:var(--ln);font-size:14px;color:var(--mu)}
+.tm{font-size:14px;color:var(--mu);text-align:center;min-width:48px}.du{text-align:right;font-weight:600}.du small{display:block;color:var(--gr);font-weight:400}
+.nt{white-space:pre-line}
+.pad{padding:14px}label{display:block;margin:12px 0 4px;color:var(--mu);font-size:14px}
+input,textarea{width:100%;font:inherit;padding:11px;border:1px solid var(--ln);border-radius:8px;background:var(--cd);color:var(--tx)}
+input[type=color]{height:44px;padding:2px}
+.chk{display:flex;gap:8px;align-items:center;color:var(--tx);font-size:15px}.chk input{width:auto}
+.chip{display:inline-block;margin:10px 8px 0 0;padding:8px 12px;border-radius:18px;background:var(--pr);color:#fff;font-size:14px;cursor:pointer}.chip.alt{background:none;border:1px solid var(--pr);color:var(--pr)}
+.add{display:flex;gap:8px;margin-top:10px}.add button,.btns button{padding:12px 16px;border-radius:8px;background:var(--pr);color:#fff}
+.btns{display:flex;gap:10px;margin-top:20px}.btns button{flex:1}.btns .sec{background:none;border:1px solid var(--rd);color:var(--rd)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:var(--cd);border-top:1px solid var(--ln);cursor:pointer}.err{color:var(--rd)}
+.mh,.mr{display:grid;grid-template-columns:22px 1fr 62px 76px 22px;gap:6px;align-items:center;padding:10px 10px;border-bottom:1px solid var(--ln)}.mh{font-size:12px;color:var(--mu);background:var(--bg)}
+.mi{text-align:left;padding:10px 8px;border:1px solid var(--ln);border-radius:8px;background:var(--cd);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mq{padding:8px 6px}
+.mh,.mr{grid-template-columns:20px 1fr 56px 66px 22px;gap:5px}.mr{padding:6px 8px}.mi{padding:8px 6px}
+.ml{display:grid;grid-template-columns:20px 1fr 46px 44px 30px;gap:4px;align-items:center;padding:3px 10px;border-bottom:1px solid var(--ln);font-size:14px;line-height:1.2}.ml>span{overflow-wrap:anywhere}.ml.mh{font-size:12px}.ml.del{grid-template-columns:1fr auto auto;background:var(--bg)}.ml.del button{padding:3px 12px}.ml>button{font-size:14px;line-height:1;padding:2px 6px}.lbx{max-height:190px;overflow-y:auto}.ml.tl{grid-template-columns:20px 1fr 30px}.ml.tl .nt{white-space:pre-line}
+select{font:inherit;width:100%;padding:10px 2px;border:1px solid var(--ln);border-radius:8px;background:var(--cd);color:var(--tx)}.nb{display:block;padding:14px;background:var(--gr);color:#fff;border-radius:8px;width:calc(100% - 28px);margin:14px}
+
+/* Modernes, kompakteres Design – reine Gestaltung, keine Änderung der Funktionen */
+:root{--bg:#F3F5F9;--cd:#FFFFFF;--tx:#172235;--mu:#738096;--pr:#2859A5;--gr:#43A866;--rd:#DF5555;--ln:#E4E8EF}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101722;--cd:#192331;--tx:#EAF0F7;--mu:#9AA8BA;--pr:#3E70BE;--ln:#2B3747}}
+:root[data-theme="dark"]{--bg:#101722;--cd:#192331;--tx:#EAF0F7;--mu:#9AA8BA;--pr:#3E70BE;--ln:#2B3747}
+body{font-size:15px;line-height:1.35;padding-bottom:78px}
+.top{gap:8px;padding:10px 14px;box-shadow:0 2px 8px #13274718}
+.top h1{font-size:18px;letter-spacing:-.2px}
+.top button{font-size:24px;padding:0 5px}
+.hero{gap:12px;padding:14px 16px 38px}
+.cell b{font-size:28px;letter-spacing:-.5px}
+.card{margin:10px 12px 0;border-radius:12px;box-shadow:0 2px 9px #1722350b;border:1px solid color-mix(in srgb,var(--ln) 70%,transparent)}
+.hero+.card{margin-top:-26px}
+.lb{padding:9px 13px;font-size:13px;letter-spacing:.1px}
+.row{gap:10px;padding:10px 13px}
+.fo{width:18px;height:16px;border-radius:5px}
+.bt{gap:8px;padding:9px 10px}
+.bt button{padding:10px 8px;border-radius:9px;font-size:15px;font-weight:600;letter-spacing:0;min-height:42px;box-shadow:none}
+.go{background:var(--gr)}.st{background:var(--rd)}.pb{background:var(--pr)}
+.sum div{padding:10px 4px}
+.sum b{font-size:16px}
+.wk{gap:8px;padding:12px 12px 6px}
+.wk button{font-size:22px;padding:0 7px}
+.day{padding:6px 13px;font-size:13px}
+.tm{font-size:13px;min-width:44px}
+.pad{padding:12px}
+label{margin:9px 0 4px;font-size:13px}
+input,textarea{padding:9px 10px;border-radius:9px;font-size:15px}
+input[type=color]{height:40px}
+.chip{margin:7px 6px 0 0;padding:7px 10px;font-size:13px;border-radius:16px}
+.add{gap:7px;margin-top:8px;align-items:center}
+.add button,.btns button{padding:9px 12px;border-radius:9px;font-size:14px;font-weight:600;min-height:38px}
+.btns{gap:8px;margin-top:14px}
+.btns button{flex:1}
+.bar{gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 10px #1722350a}
+.nb{width:calc(100% - 24px);margin:10px 12px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:600;min-height:40px}
+.mh,.mr{gap:4px;padding:7px 8px}
+.mr{padding:4px 7px}
+.mi{padding:7px 6px;border-radius:7px;font-size:13px}
+.mq{padding:6px 4px;font-size:14px}
+select{padding:7px 2px;border-radius:7px;font-size:14px}
+.ml{padding:3px 8px;font-size:13px}
+.lbx{max-height:180px}
+button,.row,.sum div,.bar{-webkit-tap-highlight-color:transparent}
+button{transition:filter .15s ease,transform .15s ease}
+button:active{filter:brightness(.94);transform:scale(.99)}
+@media(min-width:600px){#app{max-width:620px;margin:0 auto}.top{padding-left:18px;padding-right:18px}.card{margin-left:14px;margin-right:14px}}
+
+.row{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.lm{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end}.lm>div{background:var(--cd);width:100%;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.lm h3{margin:0 0 2px;font-size:17px}.lm p{margin:0 0 10px;color:var(--mu);font-size:14px}.lm button{display:block;width:100%;padding:13px;margin:6px 0;border-radius:10px;font-size:16px;font-weight:600;background:var(--bg);color:var(--tx)}.lm .rd{background:var(--rd);color:#fff}
+.wt{border-collapse:collapse;font-size:11px;min-width:640px;background:var(--cd)}.wt td,.wt th{border:1px solid var(--ln);padding:3px 5px;white-space:nowrap}.wt th{background:var(--bg)}.wt tr.dl td{border-top:2px solid var(--tx)}
+</style></head><body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+let D;try{D=JSON.parse(localStorage.getItem('sb1'))}catch(e){}
+D=D||{p:[],e:[],t:null,m:['Schleifpapier','Lack','Grundierung','Vinylboden','Parkett'],lp:null};
+D.ta=D.ta||['Alten Boden entfernen','Estrich abschleifen und Kleberreste entfernen','Schleifen und grundieren','Vinylboden verlegt','Fertigparkett verlegt','Leisten montiert und silikoniert'];D.k=D.k||['Marcel','Hermann','Antonitsch'];
+const save=()=>{try{localStorage.setItem('sb1',JSON.stringify(D))}catch(e){}};
+let V={v:'home',wo:0,rg:'week',dr:[{n:'',q:'',u:'m²'}],ret:'home',ed:null,pe:null,q:'',arch:false,mm:false,dc:0,err:''};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const pad=n=>String(n).padStart(2,'0');
+const fd=ms=>{const m=Math.max(0,Math.round(ms/60000));return pad(Math.floor(m/60))+'h '+pad(m%60)+'m'};
+const ft=ts=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const tl=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+ft(ts)};
+const DN=['So','Mo','Di','Mi','Do','Fr','Sa'],MN=['Jän.','Feb.','März','Apr.','Mai','Juni','Juli','Aug.','Sep.','Okt.','Nov.','Dez.'];
+const fday=ts=>{const d=new Date(ts);return DN[d.getDay()]+'., '+d.getDate()+'. '+MN[d.getMonth()]};
+const wk=d=>{d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-n);const y=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil(((d-y)/864e5+1)/7)};
+const mon=(o=0)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7)+o*7);return d};
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const P=id=>D.p.find(p=>p.id===id);
+const edur=e=>e.end-e.start-(e.pz||0);
+const tpause=(t,n)=>t.pz+(t.ps?n-t.ps:0);
+const tdur=(t,n)=>n-t.start-tpause(t,n);
+const head=(t,back)=>`<header class="top">${back?'<button data-a="back">‹</button>':'<button data-a="mn" style="font-size:26px">☰</button>'}<h1>${t}</h1><span class="sp"></span>${back?'':'<button data-a="bk">⋮</button>'}</header>`;
+
+function home(L){
+ const n=Date.now(),t=D.t,p=P(t?t.pid:D.lp),pz=t?tpause(t,n):0,du=t?tdur(t,n):0;
+ const d0=new Date();d0.setHours(0,0,0,0);const w0=+mon(),m0=+new Date(d0.getFullYear(),d0.getMonth(),1);
+ const sum=f=>D.e.filter(e=>e.start>=f).reduce((a,e)=>a+edur(e),0)+(t&&t.start>=f?du:0);
+ let ws,we,lab;
+ if(V.rg==='day'){const x=new Date(d0);x.setDate(x.getDate()+V.wo);ws=+x;x.setDate(x.getDate()+1);we=x;lab=V.wo?fday(ws):'Heute · '+fday(ws)}
+ else if(V.rg==='month'){const x=new Date(d0.getFullYear(),d0.getMonth()+V.wo,1);ws=+x;we=new Date(x.getFullYear(),x.getMonth()+1,1);lab=['Jänner','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][x.getMonth()]+' '+x.getFullYear()}
+ else{ws=+mon(V.wo);we=new Date(ws);we.setDate(we.getDate()+7);lab='KW '+wk(new Date(ws))+(V.wo?'':' (diese Woche)')}
+ const es=D.e.filter(e=>e.start>=ws&&e.start<+we).sort((a,b)=>b.start-a.start);
+ const wsum=es.reduce((a,e)=>a+edur(e),0)+(t&&t.start>=ws&&t.start<+we?du:0);
+ let h='',k='';
+ es.forEach(e=>{const dk=fday(e.start);
+  if(dk!==k){k=dk;const ds=es.filter(x=>fday(x.start)===dk).reduce((a,x)=>a+edur(x),0);h+=`<div class="day"><span>${dk}</span><span>${fd(ds)}</span></div>`}
+  const q=P(e.pid)||{name:'?',c:'#999'};
+  h+=`<div class="row" data-a="edit" data-i="${e.id}"><div class="tm">${ft(e.start)}<br>${ft(e.end)}</div><div class="g"><b style="color:${q.c}">${esc(q.name)}</b><small class="nt">${esc(etext(e))}</small></div><div class="du">${fd(edur(e))}${e.pz?`<small>${fd(e.pz)}</small>`:''}</div></div>`});
+ const btn=t?(t.ps?'<button class="go" data-a="resume">Fortsetzen</button>':'<button class="pb" data-a="pause">Pause</button>')+'<button class="st" data-a="stop">Stopp</button>':'<button class="go" data-a="start">Start</button>';
+ if(L)return `<header class="top"><button data-a="home"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M5 9l7 7 7-7"/></svg></button><div class="g"><b>${lab}</b></div><b>${fd(wsum)}</b></header><div class="wk" id="wk"><button data-a="wp">‹</button><span class="sp"></span><button data-a="wb" style="font-size:14px;font-weight:600;color:var(--pr)">Wochenbericht (PDF)</button><span class="sp"></span><button data-a="wn">›</button></div>${h||'<p class="pad" style="color:var(--mu)">Keine Einträge in diesem Zeitraum.</p>'}${h?'<p class="pad" style="color:var(--mu);font-size:13px;text-align:center">Tipp: Eintrag lange drücken zum Bearbeiten oder Löschen</p>':''}`;
+ return head('Stundenbuch')+`<section class="hero"><div class="cell ${t&&t.ps?'on':''}"><b id="pv">${fd(pz)}</b><small>Pausenzeit</small></div><div class="cell ${t&&!t.ps?'on':''}"><b id="dv">${fd(du)}</b><small>Dauer</small></div></section>
+<div class="card"><div class="lb">${t?'Timer (gestartet um '+ft(t.start)+')':'Timer'}</div>
+<div class="row" data-a="pick"><i class="fo" style="background:${p?p.c:'#999'}"></i><div class="g"><b>${p?esc(p.name):'Projekt wählen'}</b></div>›</div><div class="bt">${btn}</div></div>
+<div class="card"><div class="lb">Dauer</div><div class="sum"><div data-a="rg" data-i="day" class="${V.rg==='day'?'on':''}"><b>${fd(sum(+d0))}</b><small>Tag</small></div><div data-a="rg" data-i="week" class="${V.rg==='week'?'on':''}"><b>${fd(sum(w0))}</b><small>Woche</small></div><div data-a="rg" data-i="month" class="${V.rg==='month'?'on':''}"><b>${fd(sum(m0))}</b><small>Monat</small></div></div></div>
+<div class="bar" data-a="open"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 15l7-7 7 7"/></svg><div class="g"><b>${lab}</b></div><b>${fd(wsum)}</b></div>`}
+
+function plist(){const q=V.q.toLowerCase();
+ return D.p.filter(p=>(V.arch||!p.arch)&&(!q||[p.name,p.nr,p.cl].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.last||0)-(a.last||0))
+ .map(p=>`<div class="row" data-a="sel" data-i="${p.id}"><i class="fo" style="background:${p.c}"></i><div class="g"><b>${esc(p.name)}</b><small>${esc([p.nr&&'Prj.nr '+p.nr,p.cl,p.arch&&'abgeschlossen'].filter(Boolean).join(' · '))}</small></div><button data-a="pedit" data-i="${p.id}">✎</button></div>`).join('')||'<p class="pad">Noch keine Projekte. Lege unten dein erstes Projekt an.</p>'}
+function proj(){return head('Projekt wählen',1)+`<div class="pad"><input id="q" placeholder="Suchen (Name, Nummer, Auftraggeber)" value="${esc(V.q)}"><label class="chk"><input type="checkbox" id="arch" ${V.arch?'checked':''}> Abgeschlossene anzeigen</label></div><div id="pl">${plist()}</div><button class="nb" data-a="pnew">＋ Neues Projekt</button>`}
+
+function pedit(){const p=V.pe;return head(p.n?'Neues Projekt':'Projekt bearbeiten',1)+`<div class="pad">${V.err?`<p class="err">${V.err}</p>`:''}<label>Projektname<input id="pn" value="${esc(p.name)}"></label><label>Projektnummer<input id="pr" inputmode="numeric" value="${esc(p.nr)}"></label><label>Auftraggeber<input id="pc" value="${esc(p.cl)}"></label><label>Farbe<input id="pf" type="color" value="${p.c}"></label><label class="chk"><input id="pa" type="checkbox" ${p.arch?'checked':''}> Abgeschlossen (in der Auswahl ausblenden)</label><div class="btns"><button data-a="psave">Speichern</button></div></div>`}
+
+function eedit(){const e=V.ed,p=P(e.pid);
+ return head('Eintrag bearbeiten',1)+`<div class="pad">${V.err?`<p class="err">${V.err}</p>`:''}
+<div class="row" data-a="pick"><i class="fo" style="background:${p?p.c:'#999'}"></i><div class="g"><b>${p?esc(p.name):'Projekt wählen'}</b></div>›</div>
+<label>Beginn<input type="datetime-local" id="s" value="${tl(e.start)}"></label>
+<label>Ende<input type="datetime-local" id="en" value="${tl(e.end)}"></label>
+<label>Pause (Minuten)<input type="number" id="pz" min="0" value="${Math.round((e.pz||0)/60000)}"></label>
+<label>Notiz<textarea id="nt" rows="5">${esc(e.note)}</textarea></label>
+${mt4(e,1)}${tk(e,1)}
+<div class="btns"><button class="sec" data-a="del">${V.dc?'Wirklich löschen?':'Löschen'}</button><button data-a="esave">Speichern</button></div></div>`}
+
+const U=['m²','m¹','l','Stk.','kg','Pkg.'];
+function mtable(e,f){const r=e.mt||[];return `<div class="card" style="${f?'margin:14px 0 0':''}"><div class="lb">Material</div><div class="mh"><span>Nr.</span><span>Material / Beschreibung</span><span>Menge</span><span>Einheit</span><span></span></div>${r.map((x,i)=>`<div class="mr"><b>${i+1}</b><button class="mi" data-a="mpick" data-i="${i}">${esc(x.n)||'Material wählen'}</button><input class="mq" type="number" inputmode="decimal" data-i="${i}" value="${esc(x.q)}"><select class="mu" data-i="${i}">${U.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><button data-a="mdel" data-i="${i}">✕</button></div>`).join('')}<button class="nb" data-a="madd2" style="margin:12px;width:calc(100% - 24px)">＋ Material hinzufügen</button></div>`}
+function mt2(e,f){const r=e.mt||[],d=V.nr;
+ return `<div class="card" style="${f?'margin:14px 0 0':''}"><div class="lb">Material eintragen</div><div class="pad"><button class="mi" style="width:100%" data-a="mpick" data-i="-1">${esc(d.n)||'Material wählen'}</button><div class="add"><input id="nq" type="number" inputmode="decimal" placeholder="Menge" value="${esc(d.q)}"><select id="nu">${U.map(u=>`<option${u===d.u?' selected':''}>${u}</option>`).join('')}</select><button data-a="mins">Einfügen</button></div>${V.err2?`<p class="err">${V.err2}</p>`:''}</div><div class="lb">Für diese Baustelle mitgenommen (${r.length})</div>${r.map((x,i)=>`<div class="row"><b>${i+1}</b><div class="g"><b>${esc(x.n)}</b></div><span>${esc(x.q)} ${esc(x.u)}</span><button data-a="mdel" data-i="${i}">✕</button></div>`).join('')||'<p class="pad" style="color:var(--mu)">Noch kein Material eingefügt.</p>'}</div>`}
+function mt3(e,f){const r=e.mt||[];
+ return `<div class="card" style="${f?'margin:14px 0 0':''}"><div class="lb">Material auswählen</div><div class="mh"><span>Nr.</span><span>Artikel</span><span>Menge</span><span>Einheit</span><span></span></div>${V.dr.map((x,i)=>`<div class="mr"><b>${i+1}</b><button class="mi" data-a="mpick" data-i="${i}">${esc(x.n)||'Material wählen'}</button><input class="mq" type="number" inputmode="decimal" data-i="${i}" value="${esc(x.q)}"><select class="mu" data-i="${i}">${U.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><button data-a="drm" data-i="${i}">✕</button></div>`).join('')}<div class="add" style="padding:12px 10px 4px"><button data-a="dadd">＋ Zeile</button><button data-a="mins">In die Liste einfügen</button></div>${V.err2?`<p class="err" style="padding:0 12px">${V.err2}</p>`:''}<div class="lb" style="margin-top:8px">Für diese Baustelle mitgenommen (${r.length})</div><div class="mh"><span>Nr.</span><span>Artikel</span><span>Menge</span><span>Einheit</span><span></span></div>${r.map((x,i)=>`<div class="mr"><b>${i+1}</b><span>${esc(x.n)}</span><span>${esc(x.q)}</span><span>${esc(x.u)}</span><button data-a="mdel" data-i="${i}">✕</button></div>`).join('')||'<p class="pad" style="color:var(--mu)">Noch kein Material eingefügt.</p>'}</div>`}
+function mt4(e,f){const r=e.mt||[];
+ return `<div class="card" style="${f?'margin:14px 0 0':''}"><div class="lb">Material auswählen</div><div class="mh"><span>Nr.</span><span>Artikel</span><span>Menge</span><span>Einheit</span><span></span></div>${V.dr.map((x,i)=>`<div class="mr"><b>${i+1}</b><button class="mi" data-a="mpick" data-i="${i}">${esc(x.n)||'Material wählen'}</button><input class="mq" type="number" inputmode="decimal" data-i="${i}" value="${esc(x.q)}"><select class="mu" data-i="${i}">${U.map(u=>`<option${u===x.u?' selected':''}>${u}</option>`).join('')}</select><button data-a="drm" data-i="${i}">✕</button></div>`).join('')}<div class="add" style="padding:10px 10px 4px"><button data-a="dadd">＋ Zeile</button><button data-a="mins">In die Liste einfügen</button></div>${V.err2?`<p class="err" style="padding:0 12px">${V.err2}</p>`:''}<div class="lb" style="margin-top:8px">Für diese Baustelle mitgenommen (${r.length})</div><div class="ml mh"><span>Nr.</span><span>Artikel</span><span>Menge</span><span>Einheit</span><span></span></div><div class="lbx">${r.map((x,i)=>V.dx===i?`<div class="ml del"><span>„${esc(x.n)}“ löschen?</span><button data-a="mdel" data-i="${i}" style="color:var(--rd);font-weight:600">Ja</button><button data-a="mno">Nein</button></div>`:`<div class="ml"><b>${i+1}</b><span>${esc(x.n)}</span><span>${esc(x.q)}</span><span>${esc(x.u)}</span><button data-a="mx" data-i="${i}">✕</button></div>`).join('')||'<p class="pad" style="color:var(--mu)">Noch kein Material eingefügt.</p>'}</div></div>`}
+const etext=e=>[...(e.ta||[]),(e.kl&&e.kl.length?'Mit: '+e.kl.join(', '):''),e.note].filter(Boolean).join('\n');
+function tk(e,f){const a=e.ta||[],k=e.kl||[],st=f?'margin:14px 0 0':'';
+ const rw=(arr,key)=>arr.map((x,i)=>V.dd===key+i?`<div class="ml del"><span>löschen?</span><button data-a="xdel" data-k="${key}" data-i="${i}" style="color:var(--rd);font-weight:600">Ja</button><button data-a="xno">Nein</button></div>`:`<div class="ml tl"><b>${i+1}</b><span class="nt">${esc(x)}</span><button data-a="xask" data-k="${key}" data-i="${i}">✕</button></div>`).join('');
+ return `<div class="card" style="${st}"><div class="lb">Tätigkeiten (${a.length})</div><div class="lbx">${rw(a,'t')||'<p class="pad" style="color:var(--mu)">Noch keine Tätigkeit eingefügt.</p>'}</div><div class="add" style="padding:10px"><button data-a="lopen" data-k="t">＋ Tätigkeiten wählen</button></div></div><div class="card" style="${st}"><div class="lb">Mit auf der Baustelle (${k.length})</div><div class="lbx">${rw(k,'k')||'<p class="pad" style="color:var(--mu)">Noch niemand eingetragen.</p>'}</div><div class="add" style="padding:10px"><select id="ks"><option value="">Kollege wählen</option>${D.k.map(n=>`<option>${esc(n)}</option>`).join('')}</select><button data-a="kadd">Hinzufügen</button></div><div style="padding:0 12px 10px"><button data-a="lopen" data-k="k" style="color:var(--pr);font-size:14px">Kollegen verwalten</button></div></div>`}
+function lpick(){const t=V.pk==='t',L=t?D.ta:D.k;
+ return head(t?'Tätigkeiten wählen':'Kollegen verwalten',1)+`<div class="pad">${t?`<textarea id="nm" rows="3" placeholder="Neue Tätigkeit (auch lange Sätze)">${esc(V.pv)}</textarea>`:`<input id="nm" placeholder="Neuer Name" value="${esc(V.pv)}">`}<div class="add"><button data-a="lsave">${V.pi>=0?'Änderung speichern':'Zur Liste hinzufügen'}</button></div></div>`+L.map((x,i)=>V.dd==='L'+i?`<div class="ml del"><span>löschen?</span><button data-a="lpdel" data-i="${i}" style="color:var(--rd);font-weight:600">Ja</button><button data-a="lpno">Nein</button></div>`:`<div class="row">${t?`<input type="checkbox" class="ck" data-i="${i}" ${V.ps.includes(i)?'checked':''} style="width:auto">`:''}<div class="g nt">${esc(x)}</div><button data-a="lpe" data-i="${i}">✎</button><button data-a="lpask" data-i="${i}">✕</button></div>`).join('')+(t?`<button class="nb" data-a="linsert">Ausgewählte in die Liste einfügen</button>`:`<button class="nb" data-a="lfin">Fertig</button>`)}
+function bk(){return head('Sicherung',1)+`<div class="pad"><p>Kopiere den Text und speichere ihn, zum Beispiel in einer Notiz oder per E-Mail an dich selbst. Zum Wiederherstellen fügst du den Text hier wieder ein.</p><textarea id="bt" rows="10">${esc(V.bt||JSON.stringify(D))}</textarea><div class="add" style="margin-top:12px"><button data-a="bkc">Text kopieren</button><button data-a="bkr">${V.rc?'Wirklich ersetzen?':'Wiederherstellen'}</button></div>${V.err?`<p class="err">${V.err}</p>`:''}</div>`}
+function mpick(){return head('Material wählen',1)+`<div class="pad"><div class="add"><input id="nm" placeholder="Neues Material eingeben"><button data-a="mnew">OK</button></div></div>`+D.m.map((m,i)=>`<div class="row" data-a="msel" data-i="${i}"><div class="g"><b>${esc(m)}</b></div><button data-a="mrm" data-i="${i}">✕</button></div>`).join('')}
+const tkp=(e,i)=>tk(e).split(/(?<=<\/div><\/div>)(?=<div class="card")/)[i]||'';
+const acc=(k,t,n,body)=>`<div class="card"><div class="row" data-a="acc" data-i="${k}" style="border:0"><b>${t}</b><small style="margin-left:8px;color:var(--mu)">${n}</small><span class="sp"></span><span style="color:var(--mu);font-size:18px">${V.sc===k?'⌄':'›'}</span></div></div>${V.sc===k?body:''}`;
+function edet(){const e=V.ed,p=P(e.pid)||{name:'?',c:'#999',nr:'',cl:''};
+ return `<header class="top"><button data-a="back">‹</button><div class="g"><b>${esc(p.name)}</b><small style="color:#fff;opacity:.85">${fday(e.start)} · ${ft(e.start)}–${ft(e.end)}</small></div><button data-a="eopen">✎</button><button data-a="dmenu">⋮</button></header>${V.dm?`<div class="card" style="margin-top:0;border-radius:0"><div class="row" data-a="del" style="color:var(--rd)">${V.dc?'Wirklich löschen?':'Löschen'}</div></div>`:''}<div class="card"><div class="lb">Zeit</div><div class="sum"><div><b>${fd(e.end-e.start)}</b><small>Gesamt</small></div><div><b>${fd(edur(e))}</b><small>Dauer</small></div><div><b>${fd(e.pz||0)}</b><small>Pausen</small></div></div></div>${acc('m','Material',(e.mt||[]).length,mt4(e))}${acc('t','Tätigkeiten',(e.ta||[]).length,tkp(e,0))}${acc('k','Mit auf der Baustelle',(e.kl||[]).length,tkp(e,1))}${acc('n','Notiz und Projekt',e.note?'✓':'',`<div class="card"><div class="lb">Details</div><div class="row"><div class="g nt">${esc(e.note)||'–'}</div></div><div class="row"><i class="fo" style="background:${p.c}"></i><div class="g"><b>${esc(p.name)}</b><small>${esc([p.nr&&'Prj.nr '+p.nr,p.cl].filter(Boolean).join(' · '))}</small></div></div></div>`)}`}
+function grab(){if(!$('#s'))return;const e=V.ed;e.start=+new Date($('#s').value)||e.start;e.end=+new Date($('#en').value)||e.end;e.pz=(+$('#pz').value||0)*60000;e.note=$('#nt').value}
+const ML=['Jänner','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const wstart=()=>{const d0=new Date();d0.setHours(0,0,0,0);let x;if(V.rg==='day'){x=new Date(d0);x.setDate(x.getDate()+V.wo)}else if(V.rg==='month')x=new Date(d0.getFullYear(),d0.getMonth()+V.wo,1);else return mon(V.wo);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+function wbv(){const w=D.ws||{},d=wstart(),e=new Date(d);e.setDate(e.getDate()+6);
+return head('Wochenbericht',1)+`<div class="pad"><p>Kalenderwoche ${wk(d)}: ${d.getDate()}.${d.getMonth()+1}. bis ${e.getDate()}.${e.getMonth()+1}.${e.getFullYear()}</p>${V.err?`<p class="err">${V.err}</p>`:''}<label>Name<input id="wn1" value="${esc(w.name)}"></label><label>Auto (Kennzeichen)<input id="wa" value="${esc(w.auto)}"></label><label>Erstellt von<input id="wv" value="${esc(w.von)}"></label><div class="btns"><button data-a="wbs">PDF erstellen und senden</button></div></div>`}
+function wbs(){const w=D.ws||{};if(!w.name){V.err='Bitte zuerst unter Einstellungen den Namen eintragen.';return}const ws=mon(V.xw||0),r=$('#wr');
+if(r&&r.value){try{navigator.clipboard.writeText(r.value)}catch(e){}}
+share(new File([wbpdf(ws,w)],'Arbeitseinteilung_KW'+wk(ws)+'.pdf',{type:'application/pdf'}),'Arbeitseinteilung KW '+wk(ws)+' – '+w.name,'Anbei die Arbeitseinteilung KW '+wk(ws)+'.')}
+async function share(f,t,x){if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:t||f.name,text:x||''});return}catch(e){if(e.name==='AbortError')return}}const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click()}
+const wrap=(t,n)=>{const o=[];let l='';String(t||'').split(/\s+/).filter(Boolean).forEach(x=>{while(x.length>n){if(l){o.push(l);l=''}o.push(x.slice(0,n));x=x.slice(n)}if(l&&(l+' '+x).length>n){o.push(l);l=x}else l=l?l+' '+x:x});if(l)o.push(l);return o};
+const hm=ms=>{const m=Math.round(ms/60000);return pad(Math.floor(m/60))+':'+pad(m%60)};
+const fp=ms=>{const m=Math.round(ms/60000);return m%60?(m<60?m+' Min.':Math.floor(m/60)+':'+pad(m%60)+' Std.'):m/60+' Std.'};
+function wbents(ws){const ents=[0,1,2,3,4,5,6].map(i=>{const a=new Date(ws);a.setDate(a.getDate()+i);const b=new Date(a);b.setDate(b.getDate()+1);
+const es=D.e.filter(e=>e.start>=+a&&e.start<+b).sort((x,y)=>x.start-y.start).map(e=>{const p=P(e.pid)||{name:'?',nr:''},dl=[];
+[...(e.ta||[]),...String(e.note||'').split('\n')].map(x=>x.trim()).filter(x=>x&&!/^Material:/i.test(x)).forEach(x=>dl.push(...wrap(x,42)));
+const nm=wrap(p.name,34);return{e,p,nm,dl,nl:Math.max(1,nm.length,dl.length)}});
+return{a,es,n:Math.max(i<5?4:2,es.reduce((t,x)=>t+x.nl,0))}});
+return ents}
+function wbpdf(ws,w){
+const W=[56,30,152,59,37,99,107,188,59],X=[28];W.forEach(c=>X.push(X[X.length-1]+c));const XE=X[9],top=505,hh=20;
+const enc=t=>String(t==null?'':t).replace(/\u20ac/g,'\x80').replace(/[^\x20-\xff]/g,'?').replace(/([\\()])/g,'\\$1');
+const ents=wbents(ws);
+const R=ents.reduce((t,x)=>t+x.n,0),rh=Math.min(17,(top-hh-55)/R),fs=Math.min(8.5,rh-5);
+let s='';const T=(f,z,x,y,t)=>{s+='BT /F'+f+' '+z+' Tf '+x.toFixed(1)+' '+y.toFixed(1)+' Td ('+enc(t)+') Tj ET\n'},tw=(t,z)=>String(t).length*z*.5,
+C=(f,z,i,y,t)=>T(f,z,X[i]+(W[i]-tw(t,z))/2,y,t),Rt=(f,z,i,y,t)=>T(f,z,X[i]+W[i]-3-tw(t,z),y,t),
+L=(x1,y1,x2,y2,wd,dash)=>{s+=(dash?'[1 2] 0 d ':'[] 0 d ')+wd+' w '+x1.toFixed(1)+' '+y1.toFixed(1)+' m '+x2.toFixed(1)+' '+y2.toFixed(1)+' l S\n'};
+T(2,22,(842-17*22*.62)/2,555,'ARBEITSEINTEILUNG');
+T(1,11,28,528,'Name: '+w.name);T(1,11,250,528,'Kalenderwoche:   '+wk(ws));T(1,11,540,528,'Monat:   '+ML[ws.getMonth()]);T(1,11,770,528,String(ws.getFullYear()));
+['Datum','TAG','Kundenname','Ob-NR','Std.','von-bis','Mittagspause','Arbeitsbeschreibung','Auto'].forEach((t,i)=>C(2,10,i,top-14,t));
+let r=0;const bot=top-hh-R*rh,by=k=>top-hh-k*rh-rh+(rh-fs)/2+1.5;
+ents.forEach((x,i)=>{const dn=['Mo','Di','Mi','Do','Fr','Sa','So'][i];
+for(let k=0;k<x.n;k++){C(1,fs,1,by(r+k),dn);if(k<x.n-1)L(X[0],top-hh-(r+k+1)*rh,XE,top-hh-(r+k+1)*rh,.4,1)}
+C(1,fs,0,by(r),pad(x.a.getDate()));
+let rr=r;x.es.forEach(q=>{const e=q.e;q.nm.forEach((t,k)=>T(1,fs,X[2]+2,by(rr+k),t));Rt(1,fs,3,by(rr),q.p.nr||'');C(1,fs,4,by(rr),hm(edur(e)));C(1,fs,5,by(rr),ft(e.start)+'  -  '+ft(e.end));if(e.pz)C(1,fs,6,by(rr),fp(e.pz));q.dl.forEach((t,k)=>T(1,fs,X[7]+2,by(rr+k),t));rr+=q.nl});
+if(x.es.length)C(1,fs,8,by(r),w.auto||'');
+L(X[0],top-hh-(r+x.n)*rh,XE,top-hh-(r+x.n)*rh,1.4);r+=x.n});
+X.forEach(v=>L(v,top,v,bot,.6));L(X[0],top,XE,top,1.6);L(X[0],top-hh,XE,top-hh,1.6);L(X[0],bot,XE,bot,1.6);L(X[0],top,X[0],bot,1.6);L(XE,top,XE,bot,1.6);
+const nw=new Date(),ft2='Erstellt am: von '+(w.von||'')+'    '+pad(nw.getDate())+'.'+pad(nw.getMonth()+1)+'.'+nw.getFullYear()+' '+pad(nw.getHours())+':'+pad(nw.getMinutes())+' Uhr';T(1,8,842-28-tw(ft2,8),38,ft2);
+const O=['<</Type/Catalog/Pages 2 0 R>>','<</Type/Pages/Kids[5 0 R]/Count 1>>','<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>','<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>','<</Type/Page/Parent 2 0 R/MediaBox[0 0 842 595]/Resources<</Font<</F1 3 0 R/F2 4 0 R>>>>/Contents 6 0 R>>','<</Length '+s.length+'>>stream\n'+s+'endstream'];
+let out='%PDF-1.4\n';const off=[];O.forEach((o,i)=>{off.push(out.length);out+=(i+1)+' 0 obj\n'+o+'\nendobj\n'});
+const xr=out.length;out+='xref\n0 '+(O.length+1)+'\n0000000000 65535 f \n'+off.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<</Size '+(O.length+1)+'/Root 1 0 R>>\nstartxref\n'+xr+'\n%%EOF';
+const bb=new Uint8Array(out.length);for(let i=0;i<out.length;i++)bb[i]=out.charCodeAt(i)&255;return new Blob([bb],{type:'application/pdf'})}
+function lmenu(){const e=D.e.find(x=>x.id===V.lm);if(!e)return '';const p=P(e.pid)||{name:'?'},sm=`<p>${fday(e.start)} · ${ft(e.start)}–${ft(e.end)} · ${fd(edur(e))}</p>`;
+return V.ld?`<div class="lm" data-a="lmx"><div data-a="lmn"><h3>Eintrag wirklich löschen?</h3><p><b>${esc(p.name)}</b></p>${sm}<button data-a="lmx">Abbrechen</button><button class="rd" data-a="lmdy">Ja, löschen</button></div></div>`
+:`<div class="lm" data-a="lmx"><div data-a="lmn"><h3>${esc(p.name)}</h3>${sm}<button data-a="lme">Bearbeiten</button><button class="rd" data-a="lmd">Löschen</button><button data-a="lmx">Abbrechen</button></div></div>`}
+function drawer(){const it=(i,t)=>`<button data-a="go" data-i="${i}" style="text-align:left;border-radius:0;margin:0;background:none">${t}</button>`,h=t=>`<div style="color:var(--mu);font-size:12px;padding:14px 16px 2px">${t}</div>`;
+return `<div class="lm" data-a="mn" style="align-items:stretch;justify-content:flex-start"><div data-a="lmn" style="width:78%;max-width:320px;border-radius:0;height:100%;overflow:auto;padding:0"><div style="background:var(--pr);color:#fff;padding:22px 16px"><b style="font-size:18px">Stundenbuch</b><div style="opacity:.85;font-size:14px">${esc((D.ws||{}).name||'')}</div></div>${it('home','Timer')}${h('ZEITEN')}${it('list','Einträge')}${it('proj','Projekte')}${h('BERICHTE')}${it('ex','Exportieren')}${it('wv','Vorschau Wochenbericht')}${h('KONFIGURATION')}${it('set','Einstellungen')}${it('bk','Sichern und Wiederherstellen')}</div></div>`}
+function wex(){const w=D.ws||{},ws=mon(V.xw||0),e=new Date(ws);e.setDate(e.getDate()+6);const to=(w.to||'').split('\n').filter(Boolean);
+return head('Exportieren',1)+`<div class="pad">${V.err?`<p class="err">${V.err}</p>`:''}<div class="card"><div class="lb">Wochenbericht (Arbeitseinteilung)</div><div class="pad"><div style="display:flex;align-items:center;gap:10px"><button data-a="xwp" style="font-size:24px">‹</button><b style="flex:1;text-align:center">KW ${wk(ws)} · ${ws.getDate()}.${ws.getMonth()+1}. – ${e.getDate()}.${e.getMonth()+1}.${e.getFullYear()}</b><button data-a="xwn" style="font-size:24px">›</button></div><div class="btns"><button data-a="go" data-i="wv" style="background:none;border:1px solid var(--pr);color:var(--pr)">Vorschau</button></div>${to.length?`<label>Empfänger<select id="wr">${to.map(x=>`<option>${esc(x)}</option>`).join('')}</select></label><p style="color:var(--mu);font-size:13px">Die Adresse wird kopiert. Wähle im Teilen-Menü Gmail und füge sie im Feld „An“ ein.</p>`:'<p style="color:var(--mu);font-size:13px">Empfänger kannst du unter Einstellungen hinterlegen.</p>'}<div class="btns"><button data-a="wbs">PDF erstellen und senden</button></div></div></div></div>`}
+function wprev(){const ws=mon(V.xw||0),w=D.ws||{},E=wbents(ws),DT=['Mo','Di','Mi','Do','Fr','Sa','So'];let tot=0,h='';
+E.forEach((x,i)=>{const R=[];x.es.forEach(q=>{tot+=edur(q.e);for(let k=0;k<q.nl;k++)R.push([q.nm[k]||'',k?'':(q.p.nr||''),k?'':hm(edur(q.e)),k?'':ft(q.e.start)+' - '+ft(q.e.end),k?'':(q.e.pz?fp(q.e.pz):''),q.dl[k]||'',k?'':(w.auto||'')])});
+while(R.length<x.n)R.push(['','','','','','','']);
+R.forEach((r,k)=>{h+=`<tr${k?'':' class="dl"'}><td>${k?'':String(x.a.getDate()).padStart(2,'0')}</td><td>${DT[i]}</td>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`})});
+return head('Vorschau KW '+wk(ws),1)+`<div class="pad"><b>${esc(w.name||'(Name fehlt – unter Einstellungen eintragen)')}</b> · KW ${wk(ws)} · ${ML[ws.getMonth()]} ${ws.getFullYear()}</div><div style="overflow-x:auto;padding:0 8px"><table class="wt"><tr><th>Datum</th><th>Tag</th><th>Kundenname</th><th>Ob-NR</th><th>Std.</th><th>von-bis</th><th>Pause</th><th>Arbeitsbeschreibung</th><th>Auto</th></tr>${h}</table></div><p class="pad"><b>Summe: ${fd(tot)}</b></p><div class="pad"><div class="btns"><button data-a="wbs">PDF erstellen und senden</button></div></div>`}
+function wset(){const w=D.ws||{};return head('Einstellungen',1)+`<div class="pad"><label>Name<input id="sn" value="${esc(w.name)}"></label><label>Auto (Kennzeichen)<input id="sa" value="${esc(w.auto)}"></label><label>Erstellt von<input id="sv2" value="${esc(w.von)}"></label><label>E-Mail-Empfänger (einer pro Zeile)<textarea id="sm" rows="4">${esc(w.to)}</textarea></label><div class="btns"><button data-a="ssave">Speichern</button></div></div>`}
+function render(){$('#app').innerHTML=({home,list:()=>home(1),proj,pedit,eedit,edet,mpick,lpick,bk,wb:wbv,ex:wex,wv:wprev,set:wset})[V.v]()+(V.lm?lmenu():'')+(V.mn?drawer():'')}
+
+let LPt=null,LPf=0,LPx=0,LPy=0;
+document.addEventListener('pointerdown',ev=>{const r=ev.target.closest('.row[data-a="edit"]');if(!r)return;LPx=ev.clientX;LPy=ev.clientY;clearTimeout(LPt);LPt=setTimeout(()=>{LPt=null;LPf=1;V.lm=r.dataset.i;V.ld=0;render();if(navigator.vibrate)navigator.vibrate(30)},550)});
+document.addEventListener('pointermove',ev=>{if(LPt&&(Math.abs(ev.clientX-LPx)>10||Math.abs(ev.clientY-LPy)>10)){clearTimeout(LPt);LPt=null}});
+['pointerup','pointercancel'].forEach(t=>document.addEventListener(t,()=>{clearTimeout(LPt);LPt=null;if(LPf)setTimeout(()=>{LPf=0},350)}));
+document.addEventListener('contextmenu',ev=>{if(ev.target.closest('.row[data-a="edit"]'))ev.preventDefault()});
+document.addEventListener('click',ev=>{
+ if(LPf){LPf=0;return}
+ const b=ev.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,i=b.dataset.i,n=Date.now();if(a!=='mx')V.dx=-1;if(a!=='bkr')V.rc=0;if(a!=='xask'&&a!=='lpask')V.dd='';
+ if(a==='back')V.v=({proj:V.ret,pedit:'proj',edet:V.from,mpick:V.mret,lpick:V.mret,wb:'list',ex:'home',wv:'ex',set:'home',eedit:V.fromOv?'edet':'home'})[V.v]||'home';
+ else if(a==='pick'){if(V.v==='eedit'){grab();V.ret='eedit'}else V.ret='home';V.v='proj';V.q=''}
+ else if(a==='sel'){D.lp=i;P(i).last=n;if(V.ret==='eedit')V.ed.pid=i;else if(D.t)D.t.pid=i;V.v=V.ret}
+ else if(a==='start'){if(!P(D.lp)){V.ret='home';V.v='proj'}else D.t={pid:D.lp,start:n,pz:0,ps:null}}
+ else if(a==='pause')D.t.ps=n;
+ else if(a==='resume'){D.t.pz+=n-D.t.ps;D.t.ps=null}
+ else if(a==='stop'){const t=D.t;if(t.ps)t.pz+=n-t.ps;V.ed={id:uid(),pid:t.pid,start:t.start,end:n,pz:t.pz,note:''};D.e.push(V.ed);D.t=null;V.fromOv=0;V.v='eedit';V.dc=0;V.mm=0;V.err=''}
+ else if(a==='edit'){V.ed=D.e.find(x=>x.id===i);V.from=V.v;V.v='edet';V.sc='';V.dc=0;V.dm=0;V.mm=0;V.err=''}
+ else if(a==='eopen'){V.fromOv=1;V.v='eedit';V.dc=0}
+ else if(a==='dmenu')V.dm=!V.dm;
+ else if(a==='mpick'){if(V.v==='eedit')grab();V.mi=+i;V.mret=V.v;V.v='mpick'}
+ else if(a==='madd2'){if(V.v==='eedit')grab();V.ed.mt=V.ed.mt||[];V.ed.mt.push({n:'',q:'',u:'m²'});V.mi=V.ed.mt.length-1;V.mret=V.v;V.v='mpick'}
+ else if(a==='msel'){V.dr[V.mi].n=D.m[i];V.v=V.mret}
+ else if(a==='mnew'){const v=$('#nm').value.trim();if(v){if(!D.m.includes(v))D.m.push(v);V.dr[V.mi].n=v;V.v=V.mret}}
+ else if(a==='mins'){if(V.v==='eedit')grab();const ok=V.dr.filter(d=>d.n);if(!ok.length)V.err2='Bitte mindestens ein Material wählen.';else{V.ed.mt=(V.ed.mt||[]).concat(ok.map(d=>({n:d.n,q:d.q,u:d.u})));V.dr=[{n:'',q:'',u:'m²'}];V.err2=''}}
+ else if(a==='dadd'){if(V.v==='eedit')grab();V.dr.push({n:'',q:'',u:V.dr[V.dr.length-1].u})}
+ else if(a==='drm'){if(V.v==='eedit')grab();V.dr.splice(i,1);if(!V.dr.length)V.dr=[{n:'',q:'',u:'m²'}]}
+ else if(a==='mrm')D.m.splice(i,1);
+ else if(a==='mx'){if(V.v==='eedit')grab();V.dx=+i}
+ else if(a==='mno'){if(V.v==='eedit')grab()}
+ else if(a==='lopen'){if(V.v==='eedit')grab();V.pk=b.dataset.k;V.pv='';V.pi=-1;V.ps=[];V.mret=V.v;V.v='lpick'}
+ else if(a==='kadd'){if(V.v==='eedit')grab();const s=$('#ks').value;if(s){V.ed.kl=V.ed.kl||[];if(!V.ed.kl.includes(s))V.ed.kl.push(s)}}
+ else if(a==='xask'){if(V.v==='eedit')grab();V.dd=b.dataset.k+i}
+ else if(a==='xdel'){if(V.v==='eedit')grab();(b.dataset.k==='t'?V.ed.ta:V.ed.kl).splice(i,1)}
+ else if(a==='xno'){if(V.v==='eedit')grab()}
+ else if(a==='lsave'){const v=$('#nm').value.trim(),L=V.pk==='t'?D.ta:D.k;if(v){if(V.pi>=0)L[V.pi]=v;else L.push(v);V.pi=-1;V.pv=''}}
+ else if(a==='lpe'){const L=V.pk==='t'?D.ta:D.k;V.pi=+i;V.pv=L[i]}
+ else if(a==='lpask')V.dd='L'+i;
+ else if(a==='lpdel'){(V.pk==='t'?D.ta:D.k).splice(i,1);V.ps=[]}
+ else if(a==='lpno'){}
+ else if(a==='linsert'){V.ed.ta=(V.ed.ta||[]).concat(V.ps.slice().sort((x,y)=>x-y).map(j=>D.ta[j]));V.ps=[];V.v=V.mret}
+ else if(a==='lfin')V.v=V.mret;
+ else if(a==='mdel'){if(V.v==='eedit')grab();V.ed.mt.splice(i,1)}
+ else if(a==='mat'){grab();if(V.mm)D.m.splice(i,1);else{const x=V.ed.note||'';V.ed.note=(x&&!x.endsWith('\n')?x+'\n':x)+'Material: '+D.m[i]}}
+ else if(a==='mm'){grab();V.mm=!V.mm}
+ else if(a==='madd'){grab();const v=$('#nm').value.trim();if(v)D.m.push(v)}
+ else if(a==='esave'){grab();if(V.ed.end<=V.ed.start)V.err='Das Ende muss nach dem Beginn liegen.';else{V.err='';V.v=V.fromOv?'edet':'home'}}
+ else if(a==='del'){if(!V.dc)V.dc=1;else{D.e=D.e.filter(x=>x.id!==V.ed.id);V.dc=0;V.v='home'}}
+ else if(a==='pnew'){V.pe={id:uid(),name:'',nr:'',cl:'',c:'#2A5AA6',arch:false,last:0,n:1};V.v='pedit';V.err=''}
+ else if(a==='pedit'){V.pe={...P(i)};V.v='pedit';V.err=''}
+ else if(a==='psave'){const g=s=>$(s).value.trim();V.pe.name=g('#pn');V.pe.nr=g('#pr');V.pe.cl=g('#pc');V.pe.c=$('#pf').value;V.pe.arch=$('#pa').checked;
+  if(!V.pe.name)V.err='Bitte einen Projektnamen eingeben.';
+  else{if(V.pe.n){delete V.pe.n;V.pe.last=n;D.p.push(V.pe)}else D.p[D.p.findIndex(x=>x.id===V.pe.id)]=V.pe;V.err='';V.v='proj'}}
+ else if(a==='rg'){V.rg=i;V.wo=0}
+ else if(a==='open')V.v='list';
+ else if(a==='home')V.v='home';
+ else if(a==='bk'){V.v='bk';V.bt='';V.err=''}
+ else if(a==='bkc'){const t=$('#bt');t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}
+ else if(a==='bkr'){if(!V.rc){V.bt=$('#bt').value;V.rc=1}else{try{const o=JSON.parse($('#bt').value);if(!o.p||!o.e)throw 0;o.ta=o.ta||[];o.k=o.k||[];o.m=o.m||[];D=o;V.err='';V.bt='';V.rc=0;V.v='home'}catch(x){V.err='Der Text ist keine gültige Sicherung.';V.rc=0}}}
+ else if(a==='wb'){V.xw=Math.round((+wstart()-+mon(0))/6048e5);V.v='ex';V.err=''}
+ else if(a==='mn')V.mn=!V.mn;
+ else if(a==='go'){V.mn=0;V.err='';if(i==='proj'){V.ret='home';V.q=''}if(i==='bk')V.bt='';if(i==='wv'||i==='ex')V.xw=V.xw||0;V.v=i}
+ else if(a==='xwp')V.xw=(V.xw||0)-1;
+ else if(a==='xwn')V.xw=(V.xw||0)+1;
+ else if(a==='ssave'){const g=q=>$(q).value.trim();D.ws={name:g('#sn'),auto:g('#sa'),von:g('#sv2'),to:$('#sm').value.split('\n').map(x=>x.trim()).filter(Boolean).join('\n')};V.v='home'}
+ else if(a==='lme'){V.ed=D.e.find(x=>x.id===V.lm);V.lm=null;V.from=V.v;V.v='edet';V.sc='';V.dc=0;V.dm=0;V.mm=0;V.err=''}
+ else if(a==='lmd')V.ld=1;
+ else if(a==='lmdy'){D.e=D.e.filter(x=>x.id!==V.lm);V.lm=null;V.ld=0}
+ else if(a==='lmx'){V.lm=null;V.ld=0}
+ else if(a==='lmn'){}
+ else if(a==='acc')V.sc=V.sc===i?'':i;
+ else if(a==='wbs')wbs();
+ else if(a==='wp')V.wo--;
+ else if(a==='wn')V.wo++;
+ save();render();if(a!=='acc')window.scrollTo(0,0)});
+document.addEventListener('input',ev=>{if(ev.target.id==='q'){V.q=ev.target.value;$('#pl').innerHTML=plist()}else if(ev.target.id==='nq')V.nr.q=ev.target.value;else if(ev.target.classList.contains('mq'))V.dr[ev.target.dataset.i].q=ev.target.value});
+document.addEventListener('change',ev=>{if(ev.target.classList.contains('ck')){const i=+ev.target.dataset.i,s=V.ps;if(s.includes(i))s.splice(s.indexOf(i),1);else s.push(i)}else if(ev.target.id==='arch'){V.arch=ev.target.checked;$('#pl').innerHTML=plist()}else if(ev.target.classList.contains('mu'))V.dr[ev.target.dataset.i].u=ev.target.value});
+setInterval(()=>{if(V.v==='home'&&D.t&&$('#dv')){const n=Date.now();$('#dv').textContent=fd(tdur(D.t,n));$('#pv').textContent=fd(tpause(D.t,n))}},1000);
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
