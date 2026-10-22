@@ -153,8 +153,8 @@ function eedit(){const e=V.ed,p=P(e.pid);
 <label>Beginn<input type="datetime-local" id="s" value="${tl(e.start)}"></label>
 <label>Ende<input type="datetime-local" id="en" value="${tl(e.end)}"></label>
 <label>Pause (Minuten)<input type="number" id="pz" min="0" value="${Math.round((e.pz||0)/60000)}"></label>
-<label>Notiz<textarea id="nt" rows="5">${esc(e.note)}</textarea></label>
-${mt4(e,1)}${tk(e,1)}
+${acc('n','Notiz',e.note?'✓':'','')}<div style="display:${V.sc==='n'?'block':'none'}"><label>Notiz<textarea id="nt" rows="5">${esc(e.note)}</textarea></label></div>
+${acc('m','Material',(e.mt||[]).length,mt4(e,1))}${acc('t','Tätigkeiten',(e.ta||[]).length,tkp(e,0,1))}${acc('k','Mit auf der Baustelle',(e.kl||[]).length,tkp(e,1,1))}
 <div class="btns"><button class="sec" data-a="del">${V.dc?'Wirklich löschen?':'Löschen'}</button><button data-a="esave">Speichern</button></div></div>`}
 
 const U=['m²','m¹','l','Stk.','kg','Pkg.'];
@@ -173,7 +173,7 @@ function lpick(){const t=V.pk==='t',L=t?D.ta:D.k;
  return head(t?'Tätigkeiten wählen':'Kollegen verwalten',1)+`<div class="pad">${t?`<textarea id="nm" rows="3" placeholder="Neue Tätigkeit (auch lange Sätze)">${esc(V.pv)}</textarea>`:`<input id="nm" placeholder="Neuer Name" value="${esc(V.pv)}">`}<div class="add"><button data-a="lsave">${V.pi>=0?'Änderung speichern':'Zur Liste hinzufügen'}</button></div></div>`+L.map((x,i)=>V.dd==='L'+i?`<div class="ml del"><span>löschen?</span><button data-a="lpdel" data-i="${i}" style="color:var(--rd);font-weight:600">Ja</button><button data-a="lpno">Nein</button></div>`:`<div class="row">${t?`<input type="checkbox" class="ck" data-i="${i}" ${V.ps.includes(i)?'checked':''} style="width:auto">`:''}<div class="g nt">${esc(x)}</div><button data-a="lpe" data-i="${i}">✎</button><button data-a="lpask" data-i="${i}">✕</button></div>`).join('')+(t?`<button class="nb" data-a="linsert">Ausgewählte in die Liste einfügen</button>`:`<button class="nb" data-a="lfin">Fertig</button>`)}
 function bk(){return head('Sicherung',1)+`<div class="pad"><p>Kopiere den Text und speichere ihn, zum Beispiel in einer Notiz oder per E-Mail an dich selbst. Zum Wiederherstellen fügst du den Text hier wieder ein.</p><textarea id="bt" rows="10">${esc(V.bt||JSON.stringify(D))}</textarea><div class="add" style="margin-top:12px"><button data-a="bkc">Text kopieren</button><button data-a="bkr">${V.rc?'Wirklich ersetzen?':'Wiederherstellen'}</button></div>${V.err?`<p class="err">${V.err}</p>`:''}</div>`}
 function mpick(){return head('Material wählen',1)+`<div class="pad"><div class="add"><input id="nm" placeholder="Neues Material eingeben"><button data-a="mnew">OK</button></div></div>`+D.m.map((m,i)=>`<div class="row" data-a="msel" data-i="${i}"><div class="g"><b>${esc(m)}</b></div><button data-a="mrm" data-i="${i}">✕</button></div>`).join('')}
-const tkp=(e,i)=>tk(e).split(/(?<=<\/div><\/div>)(?=<div class="card")/)[i]||'';
+const tkp=(e,i,f)=>tk(e,f).split(/(?<=<\/div><\/div>)(?=<div class="card")/)[i]||'';
 const acc=(k,t,n,body)=>`<div class="card"><div class="row" data-a="acc" data-i="${k}" style="border:0"><b>${t}</b><small style="margin-left:8px;color:var(--mu)">${n}</small><span class="sp"></span><span style="color:var(--mu);font-size:18px">${V.sc===k?'⌄':'›'}</span></div></div>${V.sc===k?body:''}`;
 function edet(){const e=V.ed,p=P(e.pid)||{name:'?',c:'#999',nr:'',cl:''};
  return `<header class="top"><button data-a="back">‹</button><div class="g"><b>${esc(p.name)}</b><small style="color:#fff;opacity:.85">${fday(e.start)} · ${ft(e.start)}–${ft(e.end)}</small></div><button data-a="eopen">✎</button><button data-a="dmenu">⋮</button></header>${V.dm?`<div class="card" style="margin-top:0;border-radius:0"><div class="row" data-a="del" style="color:var(--rd)">${V.dc?'Wirklich löschen?':'Löschen'}</div></div>`:''}<div class="card"><div class="lb">Zeit</div><div class="sum"><div><b>${fd(e.end-e.start)}</b><small>Gesamt</small></div><div><b>${fd(edur(e))}</b><small>Dauer</small></div><div><b>${fd(e.pz||0)}</b><small>Pausen</small></div></div></div>${acc('m','Material',(e.mt||[]).length,mt4(e))}${acc('t','Tätigkeiten',(e.ta||[]).length,tkp(e,0))}${acc('k','Mit auf der Baustelle',(e.kl||[]).length,tkp(e,1))}${acc('n','Notiz und Projekt',e.note?'✓':'',`<div class="card"><div class="lb">Details</div><div class="row"><div class="g nt">${esc(e.note)||'–'}</div></div><div class="row"><i class="fo" style="background:${p.c}"></i><div class="g"><b>${esc(p.name)}</b><small>${esc([p.nr&&'Prj.nr '+p.nr,p.cl].filter(Boolean).join(' · '))}</small></div></div></div>`)}`}
@@ -222,8 +222,9 @@ const bb=new Uint8Array(out.length);for(let i=0;i<out.length;i++)bb[i]=out.charC
 function lmenu(){const e=D.e.find(x=>x.id===V.lm);if(!e)return '';const p=P(e.pid)||{name:'?'},sm=`<p>${fday(e.start)} · ${ft(e.start)}–${ft(e.end)} · ${fd(edur(e))}</p>`;
 return V.ld?`<div class="lm" data-a="lmx"><div data-a="lmn"><h3>Eintrag wirklich löschen?</h3><p><b>${esc(p.name)}</b></p>${sm}<button data-a="lmx">Abbrechen</button><button class="rd" data-a="lmdy">Ja, löschen</button></div></div>`
 :`<div class="lm" data-a="lmx"><div data-a="lmn"><h3>${esc(p.name)}</h3>${sm}<button data-a="lme">Bearbeiten</button><button class="rd" data-a="lmd">Löschen</button><button data-a="lmx">Abbrechen</button></div></div>`}
+const VER='Update 002';
 function drawer(){const it=(i,t)=>`<button data-a="go" data-i="${i}" style="text-align:left;border-radius:0;margin:0;background:none">${t}</button>`,h=t=>`<div style="color:var(--mu);font-size:12px;padding:14px 16px 2px">${t}</div>`;
-return `<div class="lm" data-a="mn" style="align-items:stretch;justify-content:flex-start"><div data-a="lmn" style="width:78%;max-width:320px;border-radius:0;height:100%;overflow:auto;padding:0"><div style="background:var(--pr);color:#fff;padding:22px 16px"><b style="font-size:18px">Stundenbuch</b><div style="opacity:.85;font-size:14px">${esc((D.ws||{}).name||'')}</div></div>${it('home','Timer')}${h('ZEITEN')}${it('list','Einträge')}${it('proj','Projekte')}${h('BERICHTE')}${it('ex','Exportieren')}${it('wv','Vorschau Wochenbericht')}${h('KONFIGURATION')}${it('set','Einstellungen')}${it('bk','Sichern und Wiederherstellen')}</div></div>`}
+return `<div class="lm" data-a="mn" style="align-items:stretch;justify-content:flex-start"><div data-a="lmn" style="width:78%;max-width:320px;border-radius:0;height:100%;overflow:auto;padding:0"><div style="background:var(--pr);color:#fff;padding:22px 16px"><b style="font-size:18px">Stundenbuch</b><div style="opacity:.85;font-size:14px">${esc((D.ws||{}).name||'')}</div><div style="opacity:.7;font-size:12px;margin-top:2px">Version ${VER}</div></div>${it('home','Timer')}${h('ZEITEN')}${it('list','Einträge')}${it('proj','Projekte')}${h('BERICHTE')}${it('ex','Exportieren')}${it('wv','Vorschau Wochenbericht')}${h('KONFIGURATION')}${it('set','Einstellungen')}${it('bk','Sichern und Wiederherstellen')}</div></div>`}
 function wex(){const w=D.ws||{},ws=mon(V.xw||0),e=new Date(ws);e.setDate(e.getDate()+6);const to=(w.to||'').split('\n').filter(Boolean);
 return head('Exportieren',1)+`<div class="pad">${V.err?`<p class="err">${V.err}</p>`:''}<div class="card"><div class="lb">Wochenbericht (Arbeitseinteilung)</div><div class="pad"><div style="display:flex;align-items:center;gap:10px"><button data-a="xwp" style="font-size:24px">‹</button><b style="flex:1;text-align:center">KW ${wk(ws)} · ${ws.getDate()}.${ws.getMonth()+1}. – ${e.getDate()}.${e.getMonth()+1}.${e.getFullYear()}</b><button data-a="xwn" style="font-size:24px">›</button></div><div class="btns"><button data-a="go" data-i="wv" style="background:none;border:1px solid var(--pr);color:var(--pr)">Vorschau</button></div>${to.length?`<label>Empfänger<select id="wr">${to.map(x=>`<option>${esc(x)}</option>`).join('')}</select></label><p style="color:var(--mu);font-size:13px">Die Adresse wird kopiert. Wähle im Teilen-Menü Gmail und füge sie im Feld „An“ ein.</p>`:'<p style="color:var(--mu);font-size:13px">Empfänger kannst du unter Einstellungen hinterlegen.</p>'}<div class="btns"><button data-a="wbs">PDF erstellen und senden</button></div></div></div></div>`}
 function wprev(){const ws=mon(V.xw||0),w=D.ws||{},E=wbents(ws),DT=['Mo','Di','Mi','Do','Fr','Sa','So'];let tot=0,h='';
@@ -248,9 +249,9 @@ document.addEventListener('click',ev=>{
  else if(a==='start'){if(!P(D.lp)){V.ret='home';V.v='proj'}else D.t={pid:D.lp,start:n,pz:0,ps:null}}
  else if(a==='pause')D.t.ps=n;
  else if(a==='resume'){D.t.pz+=n-D.t.ps;D.t.ps=null}
- else if(a==='stop'){const t=D.t;if(t.ps)t.pz+=n-t.ps;V.ed={id:uid(),pid:t.pid,start:t.start,end:n,pz:t.pz,note:''};D.e.push(V.ed);D.t=null;V.fromOv=0;V.v='eedit';V.dc=0;V.mm=0;V.err=''}
+ else if(a==='stop'){const t=D.t;if(t.ps)t.pz+=n-t.ps;V.ed={id:uid(),pid:t.pid,start:t.start,end:n,pz:t.pz,note:''};D.e.push(V.ed);D.t=null;V.fromOv=0;V.v='eedit';V.sc='';V.dc=0;V.mm=0;V.err=''}
  else if(a==='edit'){V.ed=D.e.find(x=>x.id===i);V.from=V.v;V.v='edet';V.sc='';V.dc=0;V.dm=0;V.mm=0;V.err=''}
- else if(a==='eopen'){V.fromOv=1;V.v='eedit';V.dc=0}
+ else if(a==='eopen'){V.fromOv=1;V.v='eedit';V.sc='';V.dc=0}
  else if(a==='dmenu')V.dm=!V.dm;
  else if(a==='mpick'){if(V.v==='eedit')grab();V.mi=+i;V.mret=V.v;V.v='mpick'}
  else if(a==='madd2'){if(V.v==='eedit')grab();V.ed.mt=V.ed.mt||[];V.ed.mt.push({n:'',q:'',u:'m²'});V.mi=V.ed.mt.length-1;V.mret=V.v;V.v='mpick'}
@@ -302,7 +303,7 @@ document.addEventListener('click',ev=>{
  else if(a==='lmdy'){D.e=D.e.filter(x=>x.id!==V.lm);V.lm=null;V.ld=0}
  else if(a==='lmx'){V.lm=null;V.ld=0}
  else if(a==='lmn'){}
- else if(a==='acc')V.sc=V.sc===i?'':i;
+ else if(a==='acc'){if(V.v==='eedit')grab();V.sc=V.sc===i?'':i}
  else if(a==='wbs')wbs();
  else if(a==='wp')V.wo--;
  else if(a==='wn')V.wo++;
