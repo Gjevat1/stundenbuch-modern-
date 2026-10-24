@@ -1,9 +1,12 @@
-Stundenbuch - Update 002
+Stundenbuch - Update 005
 
 Neu in diesem Update:
-- Die Seite "Eintrag bearbeiten" hat jetzt dieselben aufklappbaren Menues wie die
-  Eintragsuebersicht: Notiz, Material, Taetigkeiten, Mit auf der Baustelle.
-- Im Menue (drei Striche) steht unten die Versionsnummer "Update 002".
+- Seite "Eintrag bearbeiten": Die Pause wird jetzt mit den Tasten "-" und "+" eingestellt.
+  Der Schritt folgt der Einstellung "Zeit-Intervall" (15 oder 30 Minuten).
+  Beispiel bei 30: 0 -> 30 -> 60 -> 90. Die Zahl kannst du auch direkt eintippen.
+- Unter der Pause steht, welcher Schritt gerade eingestellt ist.
+- Die Einstellung "Zeit-Intervall" bleibt bei 15 und 30 Minuten.
+- Im Menue (drei Striche) steht unten "Version Update 005".
 
 Geaendert wurde nur: index.html
 Die uebrigen Dateien (manifest.webmanifest, Icons) sind unveraendert.
@@ -14,7 +17,6 @@ So spielst du das Update ein:
 2. Dateien in den Ordner "Download Handy-Programm 2026" kopieren (gleich benannte ersetzen).
 3. Bei GitHub im Stundenbuch-Repository: Add file > Upload files,
    index.html hochladen, "Commit changes".
-4. App einmal mit Internet oeffnen. Im Menue (drei Striche) muss unten
-   "Version Update 002" stehen.
+4. App einmal mit Internet oeffnen. Im Menue muss unten "Version Update 005" stehen.
 
 Vorher in der App unter Sichern und Wiederherstellen ein Backup speichern.
